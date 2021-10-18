@@ -137,6 +137,13 @@ class Git(Shell):
         self._commit("-m", f"\"{content}\"")
         return self
 
+    def _apply(self, *args):
+        self.__commands.put(self.__command(cmd=" ".join(["apply"] + [*args])))
+
+    def apply_patch_file(self, patch_file: str):
+        self._apply(patch_file)
+        return self
+
     def _stash(self, *args):
         self.__commands.put(self.__command(cmd=" ".join(["stash"] + [*args])))
 
@@ -154,6 +161,18 @@ class Git(Shell):
 
     def stash_and_pop_last_changes(self):
         self._stash("pop")
+        return self
+
+    def stash_and_show_last_changes(self):
+        self._stash("show")
+        return self
+
+    def stash_and_show_last_changes_as_patch(self):
+        self._stash("show", "--patch")
+        return self
+
+    def stash_and_show_last_changes_and_save_as_patch_file(self):
+        self._stash("show", "--patch", ">", "patches/stashchanges.patch")
         return self
 
     def _bundle(self, *args):

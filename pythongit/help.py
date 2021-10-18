@@ -2,7 +2,7 @@ from pythongit import git
 
 vcs = git.Git()
 print("##################################################")
-print(" Here we have multiple git command by string")
+print(" Here we have git commands as string in Mode.SOFT ")
 print("##################################################")
 print()
 vcs.status()
@@ -22,7 +22,7 @@ print()
 vcs.restore_staged_changes()
 vcs.restore_staged_changes(where="yourrelativepath")
 print("GIT RESTORE: \n\t", "\n\t ".join([
-    vcs.shell() + "\t" * 4 + "restore staged changes",
+    vcs.shell() + "\t" * 8 + "restore staged changes",
     vcs.shell() + "\t" * 4 + "restore staged changes",
 ]))
 print()
@@ -30,11 +30,17 @@ vcs.stash_and_clear_stashed_changes()
 vcs.stash_and_save_changes()
 vcs.stash_and_list_saved_changes()
 vcs.stash_and_pop_last_changes()
+vcs.stash_and_show_last_changes()
+vcs.stash_and_show_last_changes_as_patch()
+vcs.stash_and_show_last_changes_and_save_as_patch_file()
 print("GIT STASH: \n\t", "\n\t ".join([
-    vcs.shell() + "\t" * 2 + "clear with stashed changes",
-    vcs.shell() + "\t" * 3 + "stash and save changes",
-    vcs.shell() + "\t" * 3 + "stash and list saved changes",
-    vcs.shell() + "\t" * 3 + "stash and pop last changes",
+    vcs.shell() + "\t" * 11 + "clear with stashed changes",
+    vcs.shell() + "\t" * 12 + "stash and save changes",
+    vcs.shell() + "\t" * 12 + "stash and list saved changes",
+    vcs.shell() + "\t" * 12 + "stash and pop last changes",
+    vcs.shell() + "\t" * 12 + "stash and show last changes",
+    vcs.shell() + "\t" * 10 + "stash and show last changes as patch",
+    vcs.shell() + "\t" * 2 + "stash and show last changes and save as patch file",
 ]))
 print()
 vcs.commit()
@@ -72,4 +78,9 @@ vcs.push_origin_on_branch_with_force(branch_name="develop")
 print("GIT PUSH: \n\t", "\n\t ".join([
     vcs.shell() + "\t" * 2 + "push on origin specific branch",
     vcs.shell() + "\t" * 2 + "push on origin specific branch with force",
+]))
+print()
+vcs.apply_patch_file(patch_file="patches/stashchanges.patch")
+print("GIT APPLY: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 2 + "apply patch file changes into your local workspace",
 ]))
