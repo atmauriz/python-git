@@ -90,11 +90,11 @@ class Git(Shell):
         self.__commands.put(self.__command(cmd=" ".join(["push"] + [*args])))
 
     def push_origin_on_branch(self, branch_name: str):
-        self._push(branch_name)
+        self._push("origin", branch_name)
         return self
 
     def push_origin_on_branch_with_force(self, branch_name: str):
-        self._push(branch_name, "--force")
+        self._push("origin", branch_name, "--force")
         return self
 
     def _branch(self, *args):
