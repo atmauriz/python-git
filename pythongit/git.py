@@ -11,6 +11,7 @@ import subprocess
 import sys
 
 from abc import ABCMeta
+from subprocess import check_output
 
 from pythongit import exceptions
 
@@ -20,6 +21,13 @@ class Mode(enum.Enum):
     HARD = 1
 
 
+class Redirection(enum.Enum):
+    OUTPUT_WRITE = ">"
+    OUTPUT_APPEND = ">>"
+    PIPE = "|"
+    INPUT_WRITE = "<"
+
+
 class Shell(metaclass=abc.ABCMeta):
     """
     Generic Shell object
@@ -27,6 +35,12 @@ class Shell(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def shell(self): pass
+
+    @staticmethod
+    def handle_redirection(command: str):
+        cmd, filename = command.split(Redirection.OUTPUT_WRITE.value)
+        with open(filename.strip(), "w") as patch_file:
+            subprocess.call(shlex.split(cmd), stdout=patch_file)
 
 
 class Git(Shell):
@@ -66,7 +80,11 @@ class Git(Shell):
             return self.__commands.get(timeout=5)
         elif self.__mode == Mode.HARD:
             while not self.__commands.empty():
-                subprocess.Popen(args=shlex.split(self.__commands.get()), stdout=sys.stdout).communicate()
+                command = self.__commands.get()
+                if Redirection.OUTPUT_WRITE.value in command:
+                    self.handle_redirection(command=command)
+                else:
+                    subprocess.Popen(args=shlex.split(command), stdout=sys.stdout).communicate()
 
     def _status(self):
         self.__commands.put(self.__command(cmd="status"))
