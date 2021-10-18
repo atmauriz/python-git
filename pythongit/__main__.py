@@ -41,3 +41,26 @@ print("GIT CHECKOUT: \n\t", "\n\t ".join([
     vcs.shell() + "\t" * 2 + "checkout in new branch name and move on it",
     vcs.shell() + "\t" * 6 + "discard not staged changes"
 ]))
+print()
+vcs.bundle_create_with_branch(branch_name="master")
+vcs.bundle_create_with_branch(branch_name="develop")
+print("GIT BUNDLE: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 2 + "bundle git repository with specific branch",
+    vcs.shell() + "\t" * 2 + "bundle git repository with specific branch",
+]))
+print()
+vcs.branch()
+vcs.branch_verbose()
+vcs.branch_all()
+print("GIT BRANCH: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 2 + "check your local branches",
+    vcs.shell() + "\t" * 2 + "check your local branches with verbose details",
+    vcs.shell() + "\t" * 2 + "check all branches of your repository",
+]))
+print()
+vcs.push_origin_on_branch(branch_name="master")
+vcs.push_origin_on_branch_with_force(branch_name="develop")
+print("GIT PUSH: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 2 + "push on origin specific branch",
+    vcs.shell() + "\t" * 2 + "push on origin specific branch with force",
+]))

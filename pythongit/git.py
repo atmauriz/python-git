@@ -33,11 +33,15 @@ class Git(Shell):
 
     __commands = None
     __mode: Mode = Mode.SOFT
+    __module = "pythongit"
 
     def __init__(self) -> None:
         self.__commands = queue.Queue()
         if ".git" not in os.listdir(path="."):
             raise exceptions.GitDirectoryNotFound
+
+    def __module__(self):
+        return self.__module
 
     def __command(self, cmd: str):
         return f"git {cmd}"
@@ -52,7 +56,7 @@ class Git(Shell):
 
     def shell(self):
         if self.__mode == Mode.SOFT:
-            return self.__commands.get()
+            return self.__commands.get(timeout=5)
         elif self.__mode == Mode.HARD:
             # todo: subprocess.Popen command
             pass
@@ -72,11 +76,26 @@ class Git(Shell):
     def checkout_and_discard_changes(self, where: str = "."):
         self._checkout("--", where)
 
-    def _push(self):
-        self.__commands.put(self.__command(cmd="push"))
+    def _push(self, *args):
+        self.__commands.put(self.__command(cmd=" ".join(["push"] + [*args])))
 
-    def _branch(self):
-        self.__commands.put(self.__command(cmd="branch"))
+    def push_origin_on_branch(self, branch_name: str):
+        self._push(branch_name)
+
+    def push_origin_on_branch_with_force(self, branch_name: str):
+        self._push(branch_name, "--force")
+
+    def _branch(self, *args):
+        self.__commands.put(self.__command(cmd=" ".join(["branch"] + [*args])))
+
+    def branch(self):
+        self._branch()
+
+    def branch_verbose(self):
+        self._branch("-vv")
+
+    def branch_all(self):
+        self._branch("-a")
 
     def _add(self, *args):
         self.__commands.put(self.__command(cmd=" ".join(["add"] + [*args])))
@@ -105,5 +124,8 @@ class Git(Shell):
     def stash_and_pop_last_changes(self):
         self._stash("pop")
 
-    def _bundle(self):
-        self.__commands.put(self.__command(cmd="bundle"))
+    def _bundle(self, *args):
+        self.__commands.put(self.__command(cmd=" ".join(["bundle"] + [*args])))
+
+    def bundle_create_with_branch(self, branch_name: str):
+        self._bundle("create", f"{self.__module__()}.bundle", branch_name)
