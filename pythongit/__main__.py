@@ -1,6 +1,7 @@
 from pythongit import git
 
 vcs = git.Git().hard()
+vcs.bundle_create_with_branch(branch_name="develop").shell()
 
 # IT WORKS
 # stash current changes, create a patch file into patches directory and clear stash saved changes
@@ -11,4 +12,4 @@ vcs = git.Git().hard()
 # vcs.apply_patch_file(patch_file="patches/stashchanges.patch").shell()
 
 # IT WORKS
-vcs.add_not_staged_changes().commit_with_message(content="Stash command completed").shell()
+# vcs.add_not_staged_changes().commit_with_message(content="Stash command completed").shell()
