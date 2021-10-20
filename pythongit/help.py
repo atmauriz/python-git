@@ -10,6 +10,21 @@ print("GIT STATUS: \n\t", "\n\t ".join([
     vcs.shell() + "\t" * 4 + "check your local git changes",
 ]))
 print()
+vcs.fetch_all()
+print("GIT FETCH: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 4 + "fetch changes from remote repository",
+]))
+print()
+vcs.pull_origin_master()
+print("GIT PULL: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 4 + "fetch changes from master branch and apply into your current branch",
+]))
+print()
+vcs.rebase_origin_master()
+print("GIT REBASE: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 4 + "rebase your changes with remote master branch",
+]))
+print()
 vcs.add_not_staged_changes(where=".")
 vcs.add_not_staged_changes(where="yourrelativepath")
 vcs.add_not_staged_changes(where="tests")
