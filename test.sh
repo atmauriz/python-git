@@ -1,5 +1,5 @@
 # install package in python virtualenvironment
-python -m pip install .
+python setup.py install
 sleep 0.5
 
 # perform test execution

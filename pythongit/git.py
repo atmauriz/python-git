@@ -93,6 +93,27 @@ class Git(Shell):
         self._status()
         return self
 
+    def _fetch(self, *args):
+        self.__commands.put(self.__command(cmd=" ".join(["fetch"] + [*args])))
+
+    def fetch_all(self):
+        self._fetch("-a")
+        return self
+
+    def _pull(self, *args):
+        self.__commands.put(self.__command(cmd=" ".join(["pull"] + [*args])))
+
+    def pull_origin_master(self):
+        self._pull("origin", "master")
+        return self
+
+    def _rebase(self, *args):
+        self.__commands.put(self.__command(cmd=" ".join(["rebase"] + [*args])))
+
+    def rebase_origin_master(self):
+        self._rebase("origin/master")
+        return self
+
     def _checkout(self, *args):
         self.__commands.put(self.__command(cmd=" ".join(["checkout"] + [*args])))
 
