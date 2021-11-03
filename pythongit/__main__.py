@@ -1,4 +1,4 @@
-from pythongit import git
+from pythongit.core import git
 
 vcs = git.Git().hard()
 vcs.bundle_create_with_branch(branch_name="develop").shell()

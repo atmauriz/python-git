@@ -1,4 +1,4 @@
-from pythongit import git
+from pythongit.core import git
 
 vcs = git.Git()
 print("##################################################")

@@ -14,6 +14,10 @@ from abc import ABCMeta
 from subprocess import check_output
 
 from pythongit import exceptions
+from pythongit.core.subcommands import (
+    StatusMixin, FetchMixin, PullMixin, RebaseMixin, CheckoutMixin, PushMixin, BranchMixin, AddMixin,
+    RestoreMixin, CommitMixin, ApplyMixin, StashMixin, BundleMixin
+)
 
 
 class Mode(enum.Enum):
@@ -43,7 +47,11 @@ class Shell(metaclass=abc.ABCMeta):
             subprocess.call(shlex.split(cmd), stdout=patch_file)
 
 
-class Git(Shell):
+class Git(
+    Shell,
+    StatusMixin, FetchMixin, PullMixin, RebaseMixin, CheckoutMixin, PushMixin, BranchMixin, AddMixin,
+    RestoreMixin, CommitMixin, ApplyMixin, StashMixin, BundleMixin
+):
     """
     Git object
     """
@@ -59,9 +67,6 @@ class Git(Shell):
 
     def __module__(self):
         return self.__module
-
-    def __command(self, cmd: str):
-        return f"git {cmd}"
 
     @property
     def mode(self):
@@ -86,137 +91,98 @@ class Git(Shell):
                 else:
                     subprocess.Popen(args=shlex.split(command), stdout=sys.stdout).communicate()
 
-    def _status(self):
-        self.__commands.put(self.__command(cmd="status"))
-
     def status(self):
-        self._status()
+        self._status(_queue=self.__commands)
         return self
-
-    def _fetch(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["fetch"] + [*args])))
 
     def fetch_all(self):
-        self._fetch("-a")
+        self._fetch("-a", _queue=self.__commands)
         return self
-
-    def _pull(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["pull"] + [*args])))
 
     def pull_origin_master(self):
-        self._pull("origin", "master")
+        self._pull("origin", "master", _queue=self.__commands)
         return self
-
-    def _rebase(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["rebase"] + [*args])))
 
     def rebase_origin_master(self):
-        self._rebase("origin/master")
+        self._rebase("origin/master", _queue=self.__commands)
         return self
 
-    def _checkout(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["checkout"] + [*args])))
-
     def checkout_in_new_branch(self, branch_name: str):
-        self._checkout("-b", branch_name)
+        self._checkout("-b", branch_name, _queue=self.__commands)
         return self
 
     def checkout_and_discard_changes(self, where: str = "."):
-        self._checkout("--", where)
+        self._checkout("--", where, _queue=self.__commands)
         return self
 
-    def _push(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["push"] + [*args])))
-
     def push_origin_on_branch(self, branch_name: str):
-        self._push("origin", branch_name)
+        self._push("origin", branch_name, _queue=self.__commands)
         return self
 
     def push_origin_on_branch_with_force(self, branch_name: str):
-        self._push("origin", branch_name, "--force")
+        self._push("origin", branch_name, "--force", _queue=self.__commands)
         return self
 
-    def _branch(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["branch"] + [*args])))
-
     def branch(self):
-        self._branch()
+        self._branch(_queue=self.__commands)
         return self
 
     def branch_verbose(self):
-        self._branch("-vv")
+        self._branch("-vv", _queue=self.__commands)
         return self
 
     def branch_all(self):
-        self._branch("-a")
+        self._branch("-a", _queue=self.__commands)
         return self
-
-    def _add(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["add"] + [*args])))
 
     def add_not_staged_changes(self, where: str = "."):
-        self._add(where)
+        self._add(where, _queue=self.__commands)
         return self
-
-    def _restore(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["restore"] + [*args])))
 
     def restore_staged_changes(self, where: str = "."):
-        self._restore("--staged", where)
+        self._restore("--staged", where, _queue=self.__commands)
         return self
 
-    def _commit(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["commit"] + [*args])))
-
     def commit(self):
-        self._commit()
+        self._commit(_queue=self.__commands)
         return self
 
     def commit_with_message(self, content: str):
-        self._commit("-m", f"\"{content}\"")
+        self._commit("-m", f"\"{content}\"", _queue=self.__commands)
         return self
-
-    def _apply(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["apply"] + [*args])))
 
     def apply_patch_file(self, patch_file: str):
-        self._apply(patch_file)
+        self._apply(patch_file, _queue=self.__commands)
         return self
 
-    def _stash(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["stash"] + [*args])))
-
     def stash_and_clear_stashed_changes(self):
-        self._stash("clear")
+        self._stash("clear", _queue=self.__commands)
         return self
 
     def stash_and_save_changes(self):
-        self._stash("save")
+        self._stash("save", _queue=self.__commands)
         return self
 
     def stash_and_list_saved_changes(self):
-        self._stash("list")
+        self._stash("list", _queue=self.__commands)
         return self
 
     def stash_and_pop_last_changes(self):
-        self._stash("pop")
+        self._stash("pop", _queue=self.__commands)
         return self
 
     def stash_and_show_last_changes(self):
-        self._stash("show")
+        self._stash("show", _queue=self.__commands)
         return self
 
     def stash_and_show_last_changes_as_patch(self):
-        self._stash("show", "--patch")
+        self._stash("show", "--patch", _queue=self.__commands)
         return self
 
     def stash_and_show_last_changes_and_save_as_patch_file(self):
-        self._stash("show", "--patch", ">", "patches/stashchanges.patch")
+        self._stash("show", "--patch", ">", "patches/stashchanges.patch", _queue=self.__commands)
         return self
 
-    def _bundle(self, *args):
-        self.__commands.put(self.__command(cmd=" ".join(["bundle"] + [*args])))
-
     def bundle_create_with_branch(self, branch_name: str):
-        self._bundle("create", f"{self.__module__()}.bundle", branch_name)
+        self._bundle("create", f"{self.__module__()}.bundle", branch_name, _queue=self.__commands)
         return self
