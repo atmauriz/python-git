@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pythongit-atmauriz",
-    version="0.0.1",
+    version="0.0.2",
     author="Maurizio Bussi",
     author_email="maurizio.bussi.mb@gmail.com",
     description="Git Python package",
