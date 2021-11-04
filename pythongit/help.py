@@ -65,6 +65,13 @@ print("GIT COMMIT: \n\t", "\n\t ".join([
     vcs.shell() + "\t" * 2 + "commit with message",
 ]))
 print()
+vcs.reset_last_commit()
+vcs.reset_commit(how_many=3)
+print("GIT RESET: \n\t", "\n\t ".join([
+    vcs.shell() + "\t" * 2 + "reset last commit",
+    vcs.shell() + "\t" * 2 + "reset last 3 commit",
+]))
+print()
 vcs.checkout_in_new_branch(branch_name="test-my-new-branch")
 vcs.checkout_and_discard_changes()
 print("GIT CHECKOUT: \n\t", "\n\t ".join([

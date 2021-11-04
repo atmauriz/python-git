@@ -16,7 +16,7 @@ from subprocess import check_output
 from pythongit import exceptions
 from pythongit.core.subcommands import (
     StatusMixin, FetchMixin, PullMixin, RebaseMixin, CheckoutMixin, PushMixin, BranchMixin, AddMixin,
-    RestoreMixin, CommitMixin, ApplyMixin, StashMixin, BundleMixin
+    RestoreMixin, CommitMixin, ApplyMixin, StashMixin, BundleMixin, ResetMixin
 )
 
 
@@ -50,7 +50,7 @@ class Shell(metaclass=abc.ABCMeta):
 class Git(
     Shell,
     StatusMixin, FetchMixin, PullMixin, RebaseMixin, CheckoutMixin, PushMixin, BranchMixin, AddMixin,
-    RestoreMixin, CommitMixin, ApplyMixin, StashMixin, BundleMixin
+    RestoreMixin, CommitMixin, ApplyMixin, StashMixin, BundleMixin, ResetMixin
 ):
     """
     Git object
@@ -185,4 +185,12 @@ class Git(
 
     def bundle_create_with_branch(self, branch_name: str):
         self._bundle("create", f"{self.__module__()}.bundle", branch_name, _queue=self.__commands)
+        return self
+
+    def reset_last_commit(self):
+        self._reset("--soft", "HEAD~1", _queue=self.__commands)
+        return self
+
+    def reset_commit(self, how_many: int):
+        self._reset("--soft", f"HEAD~{how_many}", _queue=self.__commands)
         return self

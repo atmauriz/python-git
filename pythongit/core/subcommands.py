@@ -121,4 +121,13 @@ class BundleMixin(Command):
     """
 
     def _bundle(self, *args, _queue: queue.Queue):
-        _queue.put(self._command(cmd=" ".join(["apply"] + [*args])))
+        _queue.put(self._command(cmd=" ".join(["bundle"] + [*args])))
+
+
+class ResetMixin(Command):
+    """
+    git reset mixin
+    """
+
+    def _reset(self, *args, _queue: queue.Queue):
+        _queue.put(self._command(cmd=" ".join(["reset"] + [*args])))
