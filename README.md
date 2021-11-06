@@ -1,4 +1,4 @@
-# pythongit [![GitHub tag](https://img.shields.io/github/tag/atmauriz/python-git.svg)](https://GitHub.com/atmauriz/python-git/tags/) [![GitHub commits](https://img.shields.io/github/commits-since/atmauriz/python-git/v0.0.1.svg)](https://GitHub.com/atmauriz/python-git/commit/)
+# pythongit [![GitHub tag](https://img.shields.io/github/tag/atmauriz/python-git.svg)](https://GitHub.com/atmauriz/python-git/tags/) [![GitHub commits](https://img.shields.io/github/commits-since/atmauriz/python-git/v0.0.2.svg)](https://GitHub.com/atmauriz/python-git/commit/)
 
 ___
 [![made-with-python](https://img.shields.io/badge/Made%20with-Python-1f425f.svg)](https://www.python.org/)
