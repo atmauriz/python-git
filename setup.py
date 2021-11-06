@@ -5,10 +5,10 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="pythongit-atmauriz",
-    version="0.0.2",
+    version="0.0.3",
     author="Maurizio Bussi",
     author_email="maurizio.bussi.mb@gmail.com",
-    description="Git Python package",
+    description="PythonGit package",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/atmauriz/python-git",
@@ -21,5 +21,5 @@ setuptools.setup(
         "Operating System :: OS Independent",
     ],
     packages=setuptools.find_packages(),
-    python_requires=">=3.6",
+    python_requires=">=3.7",
 )
