@@ -27,6 +27,9 @@ class Mode(enum.Enum):
 
 
 class Redirection(enum.Enum):
+    """
+    Enumerator object to consider the system redirection from your OS
+    """
     OUTPUT_WRITE = ">"
     OUTPUT_APPEND = ">>"
     PIPE = "|"
@@ -35,7 +38,7 @@ class Redirection(enum.Enum):
 
 class Shell(metaclass=abc.ABCMeta):
     """
-    Generic Shell object
+    This is the Generic interface implemented by the tool command
     """
 
     @abc.abstractmethod
@@ -54,7 +57,8 @@ class Git(
     RestoreMixin, CommitMixin, ApplyMixin, StashMixin, BundleMixin, ResetMixin
 ):
     """
-    Git object
+    Git is the base definition of the 'git' tool.
+    It contains the collection of many git commands.
     """
 
     __commands = None
@@ -66,18 +70,27 @@ class Git(
         if ".git" not in os.listdir(path="."):
             raise exceptions.GitDirectoryNotFound
 
-    def __module__(self):
-        return self.__module
-
     @property
     def mode(self):
         return self.__mode
 
     def hard(self):
+        """
+        Used to switch the git instance mode into Mode.HARD where HARD will
+        be able to process the command on your machine.
+
+        :return: self
+        """
         self.__mode = Mode.HARD
         return self
 
     def soft(self):
+        """
+        Used to switch the git instance mode into Mode.SOFT where SOFT will
+        be able to print out the command in console.
+
+        :return: self
+        """
         self.__mode = Mode.SOFT
         return self
 
@@ -85,7 +98,14 @@ class Git(
     def commands(self) -> queue.Queue:
         return self.__commands
 
-    def shell(self):
+    def shell(self) -> None:
+        """
+        Concrete implementation of the abstract method provided by the
+        parent interface object.
+        It will dequeue the command added into the command queue.
+
+        :return: None
+        """
         if self.__mode == Mode.SOFT:
             return self.__commands.get(timeout=5)
         elif self.__mode == Mode.HARD:
@@ -96,7 +116,13 @@ class Git(
                 else:
                     subprocess.Popen(args=shlex.split(command), stdout=sys.stdout).communicate()
 
-    def drill(self, commands: str):
+    def drill(self, commands: list):
+        """
+        It can execute the command list one by one accessing to its properties.
+
+        :param commands: list
+        :return: self
+        """
         for command in commands:
             if not hasattr(self, command):
                 logging.warning(f"Git method '{command}' will replace whitespaces with underscores")
@@ -201,7 +227,7 @@ class Git(
         return self
 
     def bundle_create_with_branch(self, branch_name: str):
-        self._bundle("create", f"{self.__module__()}.bundle", branch_name, _queue=self.__commands)
+        self._bundle("create", f"{self.__module}.bundle", branch_name, _queue=self.__commands)
         return self
 
     def reset_last_commit(self):
@@ -215,7 +241,7 @@ class Git(
 
 class HardGit(Git):
     """
-    Git instance will perform on os system
+    Git instance will process directly on your machine
     """
 
     def __new__(cls) -> Any:
@@ -225,7 +251,7 @@ class HardGit(Git):
 
 class SoftGit(Git):
     """
-    Git instance will print command only in the console output
+    Git instance will print out command in the console output
     """
 
     def __new__(cls) -> Any:
