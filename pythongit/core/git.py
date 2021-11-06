@@ -12,6 +12,7 @@ import sys
 
 from abc import ABCMeta
 from subprocess import check_output
+from typing import Any
 
 from pythongit import exceptions
 from pythongit.core.subcommands import (
@@ -76,6 +77,10 @@ class Git(
         self.__mode = Mode.HARD
         return self
 
+    def soft(self):
+        self.__mode = Mode.SOFT
+        return self
+
     @property
     def commands(self) -> queue.Queue:
         return self.__commands
@@ -90,6 +95,18 @@ class Git(
                     self.handle_redirection(command=command)
                 else:
                     subprocess.Popen(args=shlex.split(command), stdout=sys.stdout).communicate()
+
+    def drill(self, commands: str):
+        for command in commands:
+            if not hasattr(self, command):
+                logging.warning(f"Git method '{command}' will replace whitespaces with underscores")
+                command = command.replace(" ", "_")
+            logging.info(f"Processing Git method: '{command}'")
+            try:
+                getattr(self, command)().shell()
+            except AttributeError as ae:
+                logging.exception(ae)
+        return self
 
     def status(self):
         self._status(_queue=self.__commands)
@@ -194,3 +211,23 @@ class Git(
     def reset_commit(self, how_many: int):
         self._reset("--soft", f"HEAD~{how_many}", _queue=self.__commands)
         return self
+
+
+class HardGit(Git):
+    """
+    Git instance will perform on os system
+    """
+
+    def __new__(cls) -> Any:
+        logging.info("HardGit enabled")
+        return super().__new__(cls).hard()
+
+
+class SoftGit(Git):
+    """
+    Git instance will print command only in the console output
+    """
+
+    def __new__(cls) -> Any:
+        logging.info("SoftGit enabled")
+        return super().__new__(cls).soft()

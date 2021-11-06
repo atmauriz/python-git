@@ -1,15 +1,56 @@
+"""
+Entrypoint for the 'pythongit' python module.
+"""
+import argparse
+import logging
+
 from pythongit.core import git
 
-vcs = git.Git().hard()
-vcs.bundle_create_with_branch(branch_name="develop").shell()
+logging.basicConfig(level=logging.DEBUG)
 
-# IT WORKS
-# stash current changes, create a patch file into patches directory and clear stash saved changes
-# vcs.stash_and_save_changes().stash_and_show_last_changes_and_save_as_patch_file().stash_and_clear_stashed_changes().shell()
 
-# IT WORKS
-# apply patch changes
-# vcs.apply_patch_file(patch_file="patches/stashchanges.patch").shell()
+def exit_in_case_no_vcs():
+    """
+    Terminate the application in case no VCS reached from the command line parser and
+    pretty print the parser.help in console.
 
-# IT WORKS
-# vcs.add_not_staged_changes().commit_with_message(content="Stash command completed").shell()
+    :return: None
+    """
+    if vcs is None:
+        print()
+        parser.print_help()
+        print()
+        exit(0)
+
+
+#############################################################################
+# PARSER configuration in order to be ready to execute as a python module  ##
+#############################################################################
+parser = argparse.ArgumentParser(description="PythonGit command line interface")
+parser.add_argument(
+    "--hard",
+    action="store_true",
+    help="Get git instance that perform system command"
+)
+parser.add_argument(
+    "--soft",
+    action="store_true",
+    help="Get git instance that print command in console"
+)
+parser.add_argument(
+    "commands",
+    nargs="+",
+    help="Git Commands to execute"
+)
+arguments = parser.parse_args()
+
+#############################################################################
+# BOOTSTRAP initialization of the VCS instance  #############################
+#############################################################################
+vcs = git.SoftGit() if arguments.soft else git.HardGit() if arguments.hard else None
+exit_in_case_no_vcs()
+
+#############################################################################
+# PROCESSING command line arguments passed  #################################
+#############################################################################
+vcs.drill(commands=arguments.commands)
